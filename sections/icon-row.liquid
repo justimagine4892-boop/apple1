@@ -1,0 +1,99 @@
+{{ 'section-icon-row.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    <div class="icon-row">
+      {%- if section.settings.title != blank -%}
+        <h2 class="icon-row__title {{ section.settings.heading_size }}">{{ section.settings.title }}</h2>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="icon-row__list" role="list">
+          {%- for block in section.blocks -%}
+            <li class="icon-row__item" {{ block.shopify_attributes }}>
+              <div class="icon-row__icon">
+                {%- if block.settings.icon != blank -%}
+                  {{ block.settings.icon }}
+                {%- elsif block.settings.icon_asset != blank -%}
+                  <img
+                    src="{{ block.settings.icon_asset | asset_url }}"
+                    alt=""
+                    loading="lazy"
+                    width="32"
+                    height="32"
+                  >
+                {%- endif -%}
+              </div>
+              {%- if block.settings.label != blank -%}
+                <p class="icon-row__label">{{ block.settings.label }}</p>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Icon Row",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "text", "id": "title", "label": "Title", "default": "End-to-End Project Delivery Across Global Markets" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "icon_asset", "label": "Icon filename in assets (e.g. icon-delivery.svg)" },
+        { "type": "html", "id": "icon", "label": "Or inline SVG markup (overrides asset)" },
+        { "type": "text", "id": "label", "label": "Label", "default": "White-Glove Delivery & Installation" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Icon Row",
+      "blocks": [
+        { "type": "column", "settings": { "icon_asset": "icon-delivery.svg", "label": "White-Glove Delivery & Installation" } },
+        { "type": "column", "settings": { "icon_asset": "icon-custom.svg", "label": "Custom & Standard Solutions" } },
+        { "type": "column", "settings": { "icon_asset": "icon-network.svg", "label": "20+ Years Manufacturing Network" } },
+        { "type": "column", "settings": { "icon_asset": "icon-logistics.svg", "label": "Global Logistics Coordination" } },
+        { "type": "column", "settings": { "icon_asset": "icon-inspection.svg", "label": "Pre-Shipment Quality Inspection" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

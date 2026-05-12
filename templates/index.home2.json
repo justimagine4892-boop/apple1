@@ -57,51 +57,41 @@
       }
     },
     "multicolumn_yrEyGM": {
-      "type": "multicolumn",
+      "type": "icon-row",
       "blocks": {
         "column_Ub3hUd": {
           "type": "column",
           "settings": {
-            "title": "",
-            "text": "<p>White-Glove <br/>Delivery & Installation</p>",
-            "link_label": "",
-            "link": ""
+            "icon_asset": "icon-delivery.svg",
+            "label": "White-Glove Delivery & Installation"
           }
         },
         "column_DMamqA": {
           "type": "column",
           "settings": {
-            "title": "",
-            "text": "<p>Custom & Standard <br/>Solutions</p>",
-            "link_label": "",
-            "link": ""
+            "icon_asset": "icon-custom.svg",
+            "label": "Custom & Standard Solutions"
           }
         },
         "column_w9DLEa": {
           "type": "column",
           "settings": {
-            "title": "",
-            "text": "<p>20+ Years <br/>Manufacturing Network</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column_pfWYDC": {
-          "type": "column",
-          "settings": {
-            "title": "",
-            "text": "<p>Pre-Shipment <br/>Quality Inspection</p>",
-            "link_label": "",
-            "link": ""
+            "icon_asset": "icon-network.svg",
+            "label": "20+ Years Manufacturing Network"
           }
         },
         "column_cnraJT": {
           "type": "column",
           "settings": {
-            "title": "",
-            "text": "<p>Global Logistics <br/>Coordination</p>",
-            "link_label": "",
-            "link": ""
+            "icon_asset": "icon-logistics.svg",
+            "label": "Global Logistics Coordination"
+          }
+        },
+        "column_pfWYDC": {
+          "type": "column",
+          "settings": {
+            "icon_asset": "icon-inspection.svg",
+            "label": "Pre-Shipment Quality Inspection"
           }
         }
       },
@@ -109,29 +99,16 @@
         "column_Ub3hUd",
         "column_DMamqA",
         "column_w9DLEa",
-        "column_pfWYDC",
-        "column_cnraJT"
+        "column_cnraJT",
+        "column_pfWYDC"
       ],
-      "custom_css": [
-        "h2 {text-align: center; width: 100%; font-size: 16px; color: #746f62;}",
-        "p {line-height: 25px; font-weight: 500; color: #1d1d1d;}"
-      ],
-      "name": "t:sections.multicolumn.presets.name",
+      "name": "Icon Row",
       "settings": {
-        "title": "END-TO-END PROJECT DELIVERY ACROSS GLOBAL MARKETS",
+        "title": "End-to-End Project Delivery Across Global Markets",
         "heading_size": "h1",
-        "image_width": "full",
-        "image_ratio": "adapt",
-        "button_label": "",
-        "button_link": "",
-        "columns_desktop": 5,
-        "column_alignment": "center",
-        "background_style": "none",
         "color_scheme": "scheme-1",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 20,
-        "padding_bottom": 36
+        "padding_top": 56,
+        "padding_bottom": 56
       }
     },
     "layout_image_txt_rMrKdp": {
