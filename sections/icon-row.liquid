@@ -28,13 +28,7 @@
                 {%- if block.settings.icon != blank -%}
                   {{ block.settings.icon }}
                 {%- elsif block.settings.icon_asset != blank -%}
-                  <img
-                    src="{{ block.settings.icon_asset | asset_url }}"
-                    alt=""
-                    loading="lazy"
-                    width="32"
-                    height="32"
-                  >
+                  {{ block.settings.icon_asset | inline_asset_content }}
                 {%- endif -%}
               </div>
               {%- if block.settings.label != blank -%}
