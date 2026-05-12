@@ -1,0 +1,225 @@
+{{ 'section-layout-collection-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    <div
+      class="project-slider{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+      data-project-slider
+    >
+      <div class="project-slider__header">
+        <div class="project-slider__heading-wrap">
+          {%- if section.settings.caption != blank -%}
+            <p class="project-slider__caption">{{ section.settings.caption }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.heading != blank -%}
+            <h2 class="project-slider__heading inline-richtext {{ section.settings.heading_size }}">
+              {{ section.settings.heading }}
+            </h2>
+          {%- endif -%}
+        </div>
+
+        <div class="project-slider__nav">
+          <button
+            type="button"
+            class="project-slider__arrow project-slider__arrow--prev"
+            aria-label="Previous"
+            data-project-slider-prev
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="project-slider__arrow project-slider__arrow--next"
+            aria-label="Next"
+            data-project-slider-next
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="project-slider__track" data-project-slider-track>
+          {%- for block in section.blocks -%}
+            <article class="project-slider__item" {{ block.shopify_attributes }}>
+              <a
+                {% if block.settings.link != blank %}
+                  href="{{ block.settings.link }}"
+                {% else %}
+                  role="link"
+                  aria-disabled="true"
+                {% endif %}
+                class="project-slider__image-link"
+                aria-label="{{ block.settings.title | default: 'Project' | escape }}"
+              >
+                <div class="project-slider__image-wrap">
+                  {%- if block.settings.image != blank -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1600
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '360, 540, 720, 900, 1100, 1400, 1600',
+                        sizes: '(min-width: 990px) 880px, (min-width: 750px) 80vw, 90vw',
+                        class: 'project-slider__image'
+                    }}
+                  {%- else -%}
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg project-slider__placeholder' }}
+                  {%- endif -%}
+
+                  <div class="project-slider__overlay">
+                    <div class="project-slider__info">
+                      {%- if block.settings.meta != blank -%}
+                        <p class="project-slider__meta">{{ block.settings.meta }}</p>
+                      {%- endif -%}
+                      {%- if block.settings.title != blank -%}
+                        <h3 class="project-slider__title h2">{{ block.settings.title }}</h3>
+                      {%- endif -%}
+                    </div>
+                    {%- if block.settings.show_icon -%}
+                      <span class="project-slider__icon" aria-hidden="true">
+                        <svg viewBox="0 0 20 20" fill="none">
+                          <path d="M6 14L14 6M8 6H14V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </a>
+            </article>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.bottom_button_label != blank -%}
+        <div class="project-slider__bottom">
+          <a
+            {% if section.settings.bottom_button_link != blank %}
+              href="{{ section.settings.bottom_button_link }}"
+            {% else %}
+              role="link"
+              aria-disabled="true"
+            {% endif %}
+            class="project-slider__bottom-button"
+          >
+            {{ section.settings.bottom_button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.currentScript.previousElementSibling;
+    while (root && !root.matches('.section-{{ section.id }}-padding')) {
+      root = root.previousElementSibling;
+    }
+    if (!root) return;
+    var slider = root.querySelector('[data-project-slider]');
+    if (!slider) return;
+    var track = slider.querySelector('[data-project-slider-track]');
+    var prev = slider.querySelector('[data-project-slider-prev]');
+    var next = slider.querySelector('[data-project-slider-next]');
+    if (!track) return;
+
+    function step() {
+      var item = track.querySelector('.project-slider__item');
+      if (!item) return track.clientWidth;
+      var style = window.getComputedStyle(track);
+      var gap = parseFloat(style.columnGap || style.gap || 0) || 0;
+      return item.getBoundingClientRect().width + gap;
+    }
+
+    function update() {
+      var max = track.scrollWidth - track.clientWidth - 1;
+      if (prev) prev.toggleAttribute('disabled', track.scrollLeft <= 0);
+      if (next) next.toggleAttribute('disabled', track.scrollLeft >= max);
+    }
+
+    if (prev) prev.addEventListener('click', function () {
+      track.scrollBy({ left: -step(), behavior: 'smooth' });
+    });
+    if (next) next.addEventListener('click', function () {
+      track.scrollBy({ left: step(), behavior: 'smooth' });
+    });
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Layout Collection Slider",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "text", "id": "caption", "label": "Caption", "default": "OUR PROJECTS" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Designed for Living" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "t:sections.all.heading_size.options__1.label" },
+        { "value": "h1", "label": "t:sections.all.heading_size.options__2.label" },
+        { "value": "h0", "label": "t:sections.all.heading_size.options__3.label" },
+        { "value": "hxl", "label": "t:sections.all.heading_size.options__4.label" },
+        { "value": "hxxl", "label": "t:sections.all.heading_size.options__5.label" }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    { "type": "text", "id": "bottom_button_label", "label": "Bottom button label", "default": "All Projects" },
+    { "type": "url", "id": "bottom_button_link", "label": "Bottom button link" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "project",
+      "name": "Project",
+      "limit": 12,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Project image" },
+        { "type": "text", "id": "title", "label": "Project title", "default": "Kitchen in Private Residence" },
+        { "type": "text", "id": "meta", "label": "Project meta", "default": "LOS ANGELES, INDOOR FURNITURE" },
+        { "type": "url", "id": "link", "label": "Project link" },
+        { "type": "checkbox", "id": "show_icon", "label": "Show arrow icon on image", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Layout Collection Slider",
+      "blocks": [
+        { "type": "project", "settings": { "title": "Kitchen in Private Residence", "meta": "LOS ANGELES, INDOOR FURNITURE" } },
+        { "type": "project", "settings": { "title": "Penthouse Apartment", "meta": "CALIFORNIA, INDOOR FURNITURE" } },
+        { "type": "project", "settings": { "title": "Villa Outdoor Area", "meta": "UTAH, OUTDOOR LIVING" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
