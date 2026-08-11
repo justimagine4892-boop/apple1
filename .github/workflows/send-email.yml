@@ -1,0 +1,47 @@
+name: Send Email
+
+# Sends an email over SMTP from a GitHub Actions runner.
+# Runners have unrestricted outbound network access, so SMTP ports
+# (465/587) work here even though they are blocked in sandboxed agents.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   SMTP_HOST      e.g. smtp.gmail.com
+#   SMTP_PORT      465 (implicit TLS) or 587 (STARTTLS)
+#   SMTP_USERNAME  the SMTP login, usually the full email address
+#   SMTP_PASSWORD  an app password / API key -- never your account password
+#   MAIL_FROM      the address to send as
+#   MAIL_TO        default recipient, used when the input is left blank
+
+on:
+  workflow_dispatch:
+    inputs:
+      to:
+        description: Recipient address (defaults to the MAIL_TO secret)
+        required: false
+        type: string
+      subject:
+        description: Subject line
+        required: true
+        type: string
+        default: Test message
+      body:
+        description: Plain-text message body
+        required: true
+        type: string
+        default: Hello from GitHub Actions.
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the message
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ inputs.to || secrets.MAIL_TO }}
+          MAIL_SUBJECT: ${{ inputs.subject }}
+          MAIL_BODY: ${{ inputs.body }}
+        run: python3 .github/scripts/send_email.py
